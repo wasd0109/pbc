@@ -20,7 +20,7 @@ export default {
   computed: {
     currentUser() {
       return this.$store.state.users.currentUser;
-    }
+    },
   },
   data() {
     return { events: [] };
@@ -49,7 +49,52 @@ export default {
         : false; // Find return truthy value if item is in array and falsy otherwise
       return !isRegistered;
     });
-    this.events = unregisteredEvents;
+    const userRes = await this.$axios.$get(
+      `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${this.currentUser.userId}`
+    );
+    const userTagIds = userRes.response.Tags;
+
+    const allTagsRes = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/tag_data"
+    );
+
+    const allTags = allTagsRes.response.results;
+
+    const userTags = allTags
+      .filter((tag) => {
+        return userTagIds.find((userTagId) => userTagId === tag._id);
+      })
+      .map((tag) => tag.Name);
+    console.log(userTags);
+    const userTagsSet = new Set(userTags);
+
+    function intersection(setA, setB) {
+      let _intersection = new Set();
+      for (let elem of setB) {
+        if (setA.has(elem)) {
+          _intersection.add(elem);
+        }
+      }
+      return _intersection;
+    }
+    const sortedEvents = unregisteredEvents.sort((a, b) => {
+      const aSet = new Set(a.Tag);
+      const bSet = new Set(b.Tag);
+
+      const aIntersection = intersection(aSet, userTagsSet);
+      const bIntersection = intersection(bSet, userTagsSet);
+      if (aIntersection.size > bIntersection.size) {
+        return -1;
+      } else if (aIntersection.size < bIntersection.size) {
+        console.log(aIntersection, bIntersection);
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    this.events = sortedEvents;
+    console.log(sortedEvents);
   },
   fetchOnServer: false,
   fetchKey: "events",
