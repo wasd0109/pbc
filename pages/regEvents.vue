@@ -1,12 +1,23 @@
 <template>
-  <div class="cards">
-    <EventCard v-for="event of registeredEvents" :key="event.id" :event="event">
-      <slot>
-        <v-btn @click.stop="handleUnRegistration(event.entryId)"
-          >Un-Register</v-btn
-        ></slot
-      >
-    </EventCard>
+  <div>
+    <v-container>
+      <Spinner color="white" v-if="$fetchState.pending"></Spinner>
+      <div class="cards" v-else>
+        <EventCard
+          v-for="event of registeredEvents"
+          :key="event.id"
+          :event="event"
+        >
+          <slot>
+            <v-btn @click.stop="handleUnRegistration(event.entryId)"
+              >Un-Register</v-btn
+            ></slot
+          >
+        </EventCard>
+      </div>
+    </v-container>
+    <v-snackbar v-model="isUnRegistering" app>Un-Registering</v-snackbar>
+    <v-snackbar v-model="isUnRegistered" app>Event Un-Registered</v-snackbar>
   </div>
 </template>
 
@@ -16,6 +27,8 @@ export default {
     return {
       registeredEvents: [],
       entries: [],
+      isUnRegistering: false,
+      isUnRegistered: false,
     };
   },
   async fetch() {
@@ -52,7 +65,7 @@ export default {
   },
   methods: {
     async handleUnRegistration(entryId) {
-      console.log(entryId);
+      this.isUnRegistering = true;
       await this.$axios.$post(
         "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/unregister-event",
         {},
@@ -63,6 +76,15 @@ export default {
         }
       );
       this.$fetch();
+      this.isUnRegistering = false;
+      this.isUnRegistered = true;
+    },
+  },
+  watch: {
+    isUnRegistered() {
+      if (this.isUnRegistered) {
+        setTimeout(() => (this.isUnRegistered = false), 3000);
+      }
     },
   },
 };
