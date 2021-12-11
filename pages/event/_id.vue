@@ -1,7 +1,14 @@
 <template>
   <v-container>
-    <v-card>
-      <v-img src="http://placehold.jp/800x200.png"></v-img>
+    <v-card min-width="100%">
+      <v-img
+        :src="
+          event['Event Image'] ||
+          'https://www.iapco.org/app/plugins/events-calendar-pro/src/resources/images/tribe-related-events-placeholder.png'
+        "
+        min-height="400px"
+        max-height="400px"
+      ></v-img>
       <v-card-title> {{ event.Title }} </v-card-title>
       <v-card-subtitle>
         {{ event.Description }}
@@ -40,7 +47,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .tag {
   margin-right: 1rem;
   padding: 0 0.5rem;

@@ -75,8 +75,12 @@ export default {
 
         let res2 = await this.$axios.$get(`https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${user_id}`);
         let user_details = res2.response.authentication.email;
+        let user_final = {...user_details, user_id}
+        console.log(user_final)
 
-        await this.$auth.$storage.setUniversal('user', user_details, true)
+        await this.$auth.$storage.setUniversal('user', user_final, true)
+        console.log("user layout");
+        console.log(this.$auth.$state.user);
         await this.$auth.$storage.setState('loggedIn', true)
 
         this.$router.push({ path: `/` });

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="cards">
+    <Spinner color="white" v-if="$fetchState.pending"></Spinner>
+    <v-container v-else class="cards">
       <EventCard
         v-for="event of events"
         :key="event.id"
@@ -11,7 +12,9 @@
           >Register</v-btn
         ></EventCard
       >
-    </div>
+    </v-container>
+    <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
+    <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
   </div>
 </template>
 
@@ -24,17 +27,18 @@ export default {
   },
   computed: {
     currentUser() {
-      return this.$store.state.users.currentUser;
-    }
+      return this.$auth.$state.user;
+    },
   },
 
   data() {
-    return { events: [] };
+    return { events: [], isRegistered: false, isRegistering: false };
   },
   async fetch() {
     const eventsRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
+    console.log("current user id", this.currentUser.user_id);
     const entriesRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
       {
@@ -42,11 +46,12 @@ export default {
           constraints: {
             key: "user_id",
             constraint_type: "equals",
-            value: this.currentUser.userId,
+            value: this.currentUser.user_id,
           },
         },
       }
     );
+    console.log("entriesRes",entriesRes);
     const events = eventsRes.response.results;
     const entries = entriesRes.response.results;
     const unregisteredEvents = events.filter((event) => {
@@ -55,12 +60,44 @@ export default {
         : false; // Find return truthy value if item is in array and falsy otherwise
       return !isRegistered;
     });
-    this.events = unregisteredEvents;
+    const userRes = await this.$axios.$get(
+      `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${this.currentUser.user_id}`
+    );
+    const userTagIds = userRes.response.Tags;
+
+    const allTagsRes = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/tag_data"
+    );
+
+    const allTags = allTagsRes.response.results;
+
+    const userTags = allTags
+      .filter((tag) => {
+        return userTagIds.find((userTagId) => userTagId === tag._id);
+      })
+      .map((tag) => tag.Name);
+    console.log(userTags);
+
+    const sortedEvents = unregisteredEvents.sort((a, b) => {
+      const aMatch = a.Tag.filter((value) => userTags.includes(value));
+      const bMatch = b.Tag.filter((value) => userTags.includes(value));
+      if (aMatch.length > bMatch.length) {
+        return -1;
+      } else if (aMatch.length < bMatch.length) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    this.events = sortedEvents;
+    console.log(sortedEvents);
   },
   fetchOnServer: false,
   fetchKey: "events",
   methods: {
     async handleRegistration(eventId) {
+      this.isRegistering = true;
       console.log(eventId);
       await this.$axios.$post(
         "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/register-event",
@@ -68,11 +105,20 @@ export default {
         {
           params: {
             eventId: eventId,
-            userId: "1639153112296x840979326742023200",
+            userId: this.currentUser.user_id,
           },
         }
       );
       this.$fetch();
+      this.isRegistered = true;
+      this.isRegistering = false;
+    },
+  },
+  watch: {
+    isRegistered() {
+      if (this.isRegistered) {
+        setTimeout(() => (this.isRegistered = false), 3000);
+      }
     },
   },
 };
@@ -83,7 +129,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-top: 1rem;
+
   flex-wrap: wrap;
   align-content: space-between;
 }
