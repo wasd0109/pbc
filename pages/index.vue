@@ -20,7 +20,7 @@ export default {
   computed: {
     currentUser() {
       return this.$store.state.users.currentUser;
-    }
+    },
   },
   data() {
     return { events: [] };
@@ -49,6 +49,7 @@ export default {
         : false; // Find return truthy value if item is in array and falsy otherwise
       return !isRegistered;
     });
+
     this.events = unregisteredEvents;
   },
   fetchOnServer: false,
@@ -77,7 +78,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-top: 1rem;
+
   flex-wrap: wrap;
   align-content: space-between;
 }
