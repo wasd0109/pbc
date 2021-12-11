@@ -14,9 +14,11 @@
         {{ event.Description }}
       </v-card-subtitle>
       <v-card-text>
-        <p class="text-sm-body-2" v-if="event['Is Online']">Online</p>
+        <p class="text-sm-body-2" v-if="event['Is Online']">Online Event</p>
         <p class="text-sm-body-2">Location: {{ event.Location }}</p>
-        <p class="text-sm-body-2">Starting time: {{ event["Event Date"] }}</p>
+        <p class="text-sm-body-2">Starting time: {{ startingTime }}</p>
+        <p class="text-sm-body-2">Ending time: {{ endingTime }}</p>
+        <p class="text-sm-body-2">Duration: {{ duration }}hr</p>
         <div id="tags">
           <div v-for="tag of event.Tags" :key="tag" class="tag">
             {{ tag }}
@@ -44,6 +46,23 @@ export default {
   },
   fetchOnServer: false,
   fetchKey: "event",
+  computed: {
+    startingTime() {
+      return new Date(this.event["Event Date (from)"]).toLocaleString();
+    },
+    endingTime() {
+      return new Date(this.event["Event Date (to)"]).toLocaleString();
+    },
+    duration() {
+      const startHours = new Date(this.event["Event Date (from)"]).getHours();
+      const endHours = new Date(this.event["Event Date (to)"]).getHours();
+      let hourDiff = endHours - startHours;
+      if (hourDiff < 0) {
+        hourDiff = 24 + hourDiff;
+      }
+      return hourDiff;
+    },
+  },
 };
 </script>
 
