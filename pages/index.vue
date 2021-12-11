@@ -13,10 +13,17 @@
 
 <script>
 export default {
+  computed: {
+    currentUser() {
+      return this.$store.state.users.currentUser;
+    }
+  },
   data() {
     return { events: [] };
   },
   async fetch() {
+    console.log(this.currentUser);
+    console.log('here');
     const { response } = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
