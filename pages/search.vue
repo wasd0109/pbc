@@ -9,7 +9,8 @@
     >
     </v-text-field>
     <v-checkbox v-model="isOnlineOnly" label="Online Only"></v-checkbox>
-    <v-list>
+    <Spinner color="white" v-if="$fetchState.pending"></Spinner>
+    <v-list v-if="eventList.length">
       <v-list-item v-for="event of filteredList">
         <v-list-item-avatar
           ><v-img
