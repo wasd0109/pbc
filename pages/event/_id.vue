@@ -1,6 +1,7 @@
 <template>
   <v-container>
-    <v-card min-width="100%">
+    <Spinner v-if="$fetchState.pending" />
+    <v-card v-else min-width="100%">
       <v-img
         :src="
           event['Event Image'] ||
@@ -30,7 +31,9 @@
 </template>
 
 <script>
+import Spinner from "../../components/Spinner.vue";
 export default {
+  components: { Spinner },
   data() {
     return { event: {} };
   },
