@@ -12,6 +12,7 @@
       <v-container>
         <v-card-title>{{ event.Title }}</v-card-title>
         <v-card-subtitle>{{ event.Description }}</v-card-subtitle>
+        <v-card-text>{{ startingTime }}</v-card-text>
         <v-chip class="tag" v-for="tag of event.Tag" :key="tag"
           ><p>{{ tag }}</p></v-chip
         ></v-container
@@ -25,6 +26,11 @@
 export default {
   props: ["event"],
   emits: ["register"],
+  computed: {
+    startingTime() {
+      return new Date(this.event["Event Date (from)"]).toLocaleString();
+    },
+  },
 };
 </script>
 
