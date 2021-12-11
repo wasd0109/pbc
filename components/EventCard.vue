@@ -1,14 +1,15 @@
 <template>
   <v-card min-width="100%">
-    <nuxt-link :to="`/event/${event._id}`" nuxt as="div">
-      <v-img src="http://placehold.jp/200x100.png"></v-img>
-      <v-card-title>{{ event.Title }}</v-card-title>
-      <v-card-subtitle>{{ event.Description }}</v-card-subtitle>
-      <v-chip class="tag" v-for="tag of event.Tag" :key="tag"
-        ><p>{{ tag }}</p></v-chip
-      >
-    </nuxt-link>
-    <v-card-actions> <slot></slot> </v-card-actions
+    <v-container
+      ><nuxt-link :to="`/event/${event._id}`" nuxt as="div">
+        <v-img src="http://placehold.jp/200x100.png"></v-img>
+        <v-card-title>{{ event.Title }}</v-card-title>
+        <v-card-subtitle>{{ event.Description }}</v-card-subtitle>
+        <v-chip class="tag" v-for="tag of event.Tag" :key="tag"
+          ><p>{{ tag }}</p></v-chip
+        >
+      </nuxt-link>
+      <v-card-actions> <slot></slot> </v-card-actions></v-container
   ></v-card>
 </template>
 
