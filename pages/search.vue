@@ -36,7 +36,6 @@ export default {
     const { response } = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
-    console.log(response);
     this.eventList = response.results;
     this.filteredList = response.results;
   },
