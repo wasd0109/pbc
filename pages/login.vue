@@ -48,7 +48,8 @@
 <script>
 
 export default {
-  layout: "loginLayout",
+
+  layout: "login",
   data() {
     return {
       email: "",
@@ -67,30 +68,19 @@ export default {
     async userLogin() {
       try {
         let res = await this.$auth.loginWith('local', { params: {email: "chivalry@gmail.com", password: "123456"}} )
-        console.log(res);
-        let user = res.data.response;
-        let user_id = user.user_id;
-        let token = user.token;
-        // let expires = user.expires;
-
-        let res2 = await this.$axios.$get(`https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${user_id}`);
-        let user_details = res2.response.authentication.email;
-
-        await this.$auth.$storage.setUniversal('user', user_details, true)
+        this.setUser(res.data.response.user_id);
+        console.log(res)
+        // this.$auth.$storage.setUniversal('user', res.data.response, true) // setting user in Vuex, cookies and localstorage
+        await this.$auth.setUser(res.data.response)
         await this.$auth.$storage.setState('loggedIn', true)
-
         this.$router.push({ path: `/` });
       } catch (err) {
         console.log(err)
       }
     },
     async logout() {
-      await this.$auth.logout('local',{params: {user_id: this.$auth.$state.user.userId}})
-      .then(res => {
-        this.$auth.$storage.setState('loggedIn', false)
-        this.$auth.$storage.setUser(null)
-        this.$auth.strategies.local.options.endpoints.user.headers['Authorization'] = null
-      }).catch(e => {
+      await this.$auth.logout('local',{params: {user_id: this.$store.state.currentUser.userId}}).catch(e => {
+        this.success = null;
         this.error = e.response.data.error + "";
       });
     }
