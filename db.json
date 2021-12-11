@@ -1,0 +1,46 @@
+{
+  "events": [
+    {
+      "title": "Art Appreciation",
+      "description": "Appreciate Art",
+      "isOnline": true,
+      "location": "Zoom",
+      "tags": ["Art", "History"],
+      "createdAt": 1639138493682,
+      "eventDate": 1639138493685,
+      "id": "1"
+    },
+    {
+      "title": "Art Appreciation 2",
+      "description": "Appreciate Art 2",
+      "isOnline": true,
+      "location": "Zoom",
+      "tags": ["Art", "History"],
+      "createdAt": 1639138493684,
+      "eventDate": 1639138493685,
+      "id": "2"
+    },
+    {
+      "title": "Art Appreciation 3",
+      "description": "Appreciate Art 3",
+      "isOnline": true,
+      "location": "Zoom",
+      "tags": ["Art", "History"],
+      "createdAt": 1639138493684,
+      "eventDate": 1639138493685,
+      "id": "3"
+    }
+  ],
+  "entries": [
+    {
+      "userId": "1",
+      "eventId": "1",
+      "id": "1"
+    },
+    {
+      "userId": "1",
+      "eventId": "2",
+      "id": "2"
+    }
+  ]
+}
