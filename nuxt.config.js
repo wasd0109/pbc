@@ -36,14 +36,17 @@ export default {
   modules: ["@nuxtjs/axios","@nuxtjs/auth-next"],
   auth: {
     redirect: {
-      login: "/index"
+      login: "login",
+      home: "/",
+      callback: 'login',
+      logout: "/"
     },
     strategies: {
       local: {
         endpoints: {
           login: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/login', method: 'post' },
           logout: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/logout', method: 'post' },
-          user: { url: '/api/auth/user', method: 'get' }
+          // user: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/currentuser', method: 'get', propertyName: false }
         }
       }
     }

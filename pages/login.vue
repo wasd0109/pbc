@@ -2,10 +2,10 @@
   <v-container class="fill-height">
     <v-row>
       <v-col>
-        <v-card v-if="$auth.state.loggedIn" max-width="450" class="mx-auto">
+        <v-card v-if="$auth.$state.loggedIn" max-width="450" class="mx-auto">
           <v-alert type="error" :value="!!error">{{ error }}</v-alert>
           <v-card-text>
-            Logged in as {{ $auth.state.users.currentUser.userId }}
+            Logged in as {{ $auth.$state.user.user_id }}
           </v-card-text>
           <v-card-actions>
             <v-spacer />
@@ -46,16 +46,9 @@
 </template>
 
 <script>
-// import qs from 'qs'
-import { mapMutations } from 'vuex'
 
 export default {
-   middleware: 'auth',
-  // computed: {
-  //   users () {
-  //     return this.$store.state.users.currentUser
-  //   }
-  // },
+
   layout: "login",
   data() {
     return {
@@ -77,17 +70,20 @@ export default {
         let res = await this.$auth.loginWith('local', { params: {email: "chivalry@gmail.com", password: "123456"}} )
         this.setUser(res.data.response.user_id);
         console.log(res)
+        // this.$auth.$storage.setUniversal('user', res.data.response, true) // setting user in Vuex, cookies and localstorage
+        await this.$auth.setUser(res.data.response)
+        await this.$auth.$storage.setState('loggedIn', true)
         this.$router.push({ path: `/` });
       } catch (err) {
         console.log(err)
       }
     },
-    // async logout() {
-    //   await this.$auth.logout('local',{params: {user_id: this.$store.state.currentUser.userId}}).catch(e => {
-    //     this.success = null;
-    //     this.error = e.response.data.error + "";
-    //   });
-    // }
+    async logout() {
+      await this.$auth.logout('local',{params: {user_id: this.$store.state.currentUser.userId}}).catch(e => {
+        this.success = null;
+        this.error = e.response.data.error + "";
+      });
+    }
   }
 };
 </script>

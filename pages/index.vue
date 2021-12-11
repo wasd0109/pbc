@@ -22,6 +22,7 @@ export default {
       return this.$store.state.users.currentUser;
     }
   },
+
   data() {
     return { events: [] };
   },
