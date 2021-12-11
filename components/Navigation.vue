@@ -43,14 +43,16 @@ export default {
     linkTo(address) {
       this.$router.push({ path: `/${address}` });
     },
-    logout() {
+    async logout() {
+      console.log("abc");
+      console.log("auth user")
+      console.log(this.$auth.$state.user);
 
-
-      // if(this.$auth.$state.user) {
-      //   await this.$auth.logout('local',{params: {user_id: this.$auth.$state.user.user_id}}).catch(e => {
-      //   console.log(e);
-      //   });
-      // }
+      if(this.$auth.$state.user) {
+        await this.$auth.logout('local',{params: {user_id: this.$auth.$state.user.user_id}}).catch(e => {
+        console.log(e);
+        });
+      }
       this.$router.push({path: '/login'});
     }
   }
