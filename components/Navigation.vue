@@ -3,12 +3,7 @@
     <v-toolbar dark class=" dp-sp-none">
       <v-toolbar-title class="headline text-uppercase md-5">
         <nuxt-link to="/" class="container-logo font-weight-bold black--text">
-          <img
-            src="~/assets/images/t2meet-logo.png"
-            alt="t2meet Logo"
-            width= "40"
-            class="logo"
-          />
+          <v-app-bar-title>T2Meet</v-app-bar-title>
           <h1 style="display:none">
             T2Meet - Events for Tokyo Tech Students
           </h1>

@@ -10,10 +10,10 @@
         Dashboard
         <v-icon>mdi-home</v-icon></v-btn
       >
-      <v-btn to="/events" nuxt
+      <!-- <v-btn to="/events" nuxt
         >Event List
         <v-icon>mdi-calendar</v-icon>
-      </v-btn>
+      </v-btn> -->
       <v-btn to="/regEvents" nuxt
         >Registered
         <v-icon>mdi-calendar-check</v-icon>

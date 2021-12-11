@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     currentUser() {
-      return this.$store.state.users.currentUser;
+      return this.$auth.$state.user;
     },
   },
 
@@ -38,6 +38,7 @@ export default {
     const eventsRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
+    console.log("current user id", this.currentUser.user_id);
     const entriesRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
       {
@@ -45,11 +46,12 @@ export default {
           constraints: {
             key: "user_id",
             constraint_type: "equals",
-            value: this.currentUser.userId,
+            value: this.currentUser.user_id,
           },
         },
       }
     );
+    console.log("entriesRes",entriesRes);
     const events = eventsRes.response.results;
     const entries = entriesRes.response.results;
     const unregisteredEvents = events.filter((event) => {
@@ -59,7 +61,7 @@ export default {
       return !isRegistered;
     });
     const userRes = await this.$axios.$get(
-      `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${this.currentUser.userId}`
+      `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${this.currentUser.user_id}`
     );
     const userTagIds = userRes.response.Tags;
 
@@ -103,7 +105,7 @@ export default {
         {
           params: {
             eventId: eventId,
-            userId: "1639153112296x840979326742023200",
+            userId: this.currentUser.user_id,
           },
         }
       );
