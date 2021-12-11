@@ -7,9 +7,9 @@
         {{ event.Description }}
       </v-card-subtitle>
       <v-card-text>
-        <p class="text-sm-body-2" v-if="event.isOnline">Online</p>
+        <p class="text-sm-body-2" v-if="event['Is Online']">Online</p>
         <p class="text-sm-body-2">Location: {{ event.Location }}</p>
-        <p class="text-sm-body-2">Starting time: {{ event.EventDate }}</p>
+        <p class="text-sm-body-2">Starting time: {{ event["Event Date"] }}</p>
         <div id="tags">
           <div v-for="tag of event.Tags" :key="tag" class="tag">
             {{ tag }}
