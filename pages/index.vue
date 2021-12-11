@@ -14,7 +14,7 @@
       >
     </v-container>
     <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
-    <v-snackbar v-model="showSnackbar" app>Event Registered</v-snackbar>
+    <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
   </div>
 </template>
 
@@ -27,7 +27,7 @@ export default {
   },
 
   data() {
-    return { events: [], showSnackbar: false, isRegistering: false };
+    return { events: [], isRegistered: false, isRegistering: false };
   },
   async fetch() {
     const eventsRes = await this.$axios.$get(
@@ -103,14 +103,14 @@ export default {
         }
       );
       this.$fetch();
-      this.showSnackbar = true;
+      this.isRegistered = true;
       this.isRegistering = false;
     },
   },
   watch: {
-    showSnackbar() {
-      if (this.showSnackbar) {
-        setTimeout(() => (this.showSnackbar = false), 3000);
+    isRegistered() {
+      if (this.isRegistered) {
+        setTimeout(() => (this.isRegistered = false), 3000);
       }
     },
   },
