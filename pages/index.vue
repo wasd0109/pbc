@@ -66,27 +66,13 @@ export default {
       })
       .map((tag) => tag.Name);
     console.log(userTags);
-    const userTagsSet = new Set(userTags);
 
-    function intersection(setA, setB) {
-      let _intersection = new Set();
-      for (let elem of setB) {
-        if (setA.has(elem)) {
-          _intersection.add(elem);
-        }
-      }
-      return _intersection;
-    }
     const sortedEvents = unregisteredEvents.sort((a, b) => {
-      const aSet = new Set(a.Tag);
-      const bSet = new Set(b.Tag);
-
-      const aIntersection = intersection(aSet, userTagsSet);
-      const bIntersection = intersection(bSet, userTagsSet);
-      if (aIntersection.size > bIntersection.size) {
+      const aMatch = a.Tag.filter((value) => userTags.includes(value));
+      const bMatch = b.Tag.filter((value) => userTags.includes(value));
+      if (aMatch.length > bMatch.length) {
         return -1;
-      } else if (aIntersection.size < bIntersection.size) {
-        console.log(aIntersection, bIntersection);
+      } else if (aMatch.length < bMatch.length) {
         return 1;
       } else {
         return 0;
