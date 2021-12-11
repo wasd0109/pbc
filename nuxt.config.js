@@ -46,7 +46,7 @@ export default {
         endpoints: {
           login: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/login', method: 'post' },
           logout: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/logout', method: 'post' },
-          // user: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/currentuser', method: 'get', propertyName: false }
+          user: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/currentuser', method: 'get', propertyName: false }
         }
       }
     }

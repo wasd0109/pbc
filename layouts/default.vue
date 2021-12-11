@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app> </v-app-bar>
+    <Navigation />
 
     <v-main>
       <Nuxt />
@@ -26,3 +26,15 @@ a {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 </style>
+
+<script>
+import Navigation from '@/components/Navigation';
+export default {
+  // middleware: ['auth'],
+  components: {
+    Navigation
+  }
+};
+</script>
+
+
