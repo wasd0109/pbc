@@ -6,7 +6,11 @@
         :key="event.id"
         :event="event"
         @register="handleRegistration"
-      />
+      >
+        <v-btn @click.stop="handleRegistration(event._id)"
+          >Register</v-btn
+        ></EventCard
+      >
     </div>
   </div>
 </template>
@@ -28,17 +32,16 @@ export default {
   methods: {
     async handleRegistration(eventId) {
       console.log(eventId);
-      const res = await this.$axios.$post(
-        `https://t2meet.bubbleapps.io/version-test/api/1.1/wf/login`,
+      await this.$axios.$post(
+        "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/register-event",
         {},
         {
           params: {
-            email: "chivalry@gmail.com",
-            password: "123456",
+            eventId: eventId.toString(),
+            userId: "1639153112296x840979326742023200",
           },
         }
       );
-      console.log(res);
     },
   },
 };

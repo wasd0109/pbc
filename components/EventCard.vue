@@ -6,9 +6,8 @@
       <v-card-subtitle>{{ event.Description }}</v-card-subtitle>
     </nuxt-link>
     <v-card-actions>
-      <v-btn @click.stop="$emit('register', event.Slug)">Register</v-btn>
-    </v-card-actions></v-card
-  >
+      <slot></slot> </v-card-actions
+  ></v-card>
 </template>
 
 <script>

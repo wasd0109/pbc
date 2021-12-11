@@ -1,11 +1,12 @@
 <template>
   <div class="cards">
-    <EventCard
-      v-for="event of registeredEvents"
-      :key="event.id"
-      :event="event"
-      @register="handleRegistration"
-    />
+    <EventCard v-for="event of registeredEvents" :key="event.id" :event="event">
+      <slot>
+        <v-btn @click.stop="handleUnRegistration(event.entryId)"
+          >Un-Register</v-btn
+        ></slot
+      >
+    </EventCard>
   </div>
 </template>
 
@@ -14,28 +15,45 @@ export default {
   data() {
     return {
       registeredEvents: [],
+      entries: [],
     };
   },
   async fetch() {
-    const entries = await this.$axios.$get(
-      "http://localhost:3001/entries?userId=1"
+    // !! Hack for using Bubble backend workflow for search
+    // TODO Find a way to do it through Bubble data API
+    const { response } = await this.$axios.$post(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/get-user-entries?userId=1639153112296x840979326742023200"
     );
+    const entries = response.results;
+    this.entries = entries;
     const results = [];
     for (let entry of entries) {
-      const event = await this.$axios.$get(
-        `http://localhost:3001/events/${entry.eventId}`
+      const { response } = await this.$axios.$get(
+        `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event/${entry.Event}`
       );
+
+      const event = response;
+
+      // To allow unregister through EntryId
+      event.entryId = entry._id;
+      console.log(entry._id);
       results.push(event);
     }
-
     this.registeredEvents = results;
   },
   methods: {
-    async handleRegistration(eventId) {
-      console.log(eventId);
-      await this.$axios.$post("http://localhost:3001/entries", {
-        data: { eventId, userId: 1 },
-      });
+    async handleUnRegistration(entryId) {
+      console.log(entryId);
+      await this.$axios.$post(
+        "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/unregister-event",
+        {},
+        {
+          params: {
+            entryId,
+          },
+        }
+      );
+      this.$fetch();
     },
   },
 };
