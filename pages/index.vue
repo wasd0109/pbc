@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Spinner color="white" v-if="$fetchState.pending"></Spinner>
     <v-container class="cards">
       <EventCard
         v-for="event of events"
