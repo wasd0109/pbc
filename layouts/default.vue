@@ -1,22 +1,31 @@
 <template>
   <v-app>
-    <v-app-bar app> </v-app-bar>
+    <v-app-bar app>
+      <v-app-bar-title>T2Meet</v-app-bar-title>
+    </v-app-bar>
 
     <v-main>
       <Nuxt />
     </v-main>
-    <v-footer app>
-      <v-bottom-navigation>
-        <v-btn to="/" nuxt>
-          Dashboard
-          <v-icon>mdi-home</v-icon></v-btn
-        >
-        <v-btn to="/regEvents" nuxt
-          >Registered
-          <v-icon>mdi-calendar</v-icon>
-        </v-btn>
-      </v-bottom-navigation>
-    </v-footer>
+
+    <v-bottom-navigation app>
+      <v-btn to="/" nuxt>
+        Dashboard
+        <v-icon>mdi-home</v-icon></v-btn
+      >
+      <v-btn to="/events" nuxt
+        >Event List
+        <v-icon>mdi-calendar</v-icon>
+      </v-btn>
+      <v-btn to="/regEvents" nuxt
+        >Registered
+        <v-icon>mdi-calendar-check</v-icon>
+      </v-btn>
+      <v-btn to="/search" nuxt
+        >Search
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </v-app>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="cards">
+    <v-container class="cards">
       <EventCard
         v-for="event of events"
         :key="event.id"
@@ -11,7 +11,7 @@
           >Register</v-btn
         ></EventCard
       >
-    </div>
+    </v-container>
   </div>
 </template>
 
@@ -20,7 +20,7 @@ export default {
   computed: {
     currentUser() {
       return this.$store.state.users.currentUser;
-    }
+    },
   },
   data() {
     return { events: [] };
@@ -77,7 +77,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-top: 1rem;
+
   flex-wrap: wrap;
   align-content: space-between;
 }
