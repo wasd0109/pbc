@@ -1,5 +1,7 @@
 <template>
   <div class="cards">
+    <Spinner color="white" v-if="$fetchState.pending"></Spinner>
+
     <EventCard v-for="event of registeredEvents" :key="event.id" :event="event">
       <slot>
         <v-btn @click.stop="handleUnRegistration(event.entryId)"
