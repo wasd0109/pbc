@@ -17,6 +17,11 @@
 
 <script>
 export default {
+  computed: {
+    currentUser() {
+      return this.$store.state.users.currentUser;
+    }
+  },
   data() {
     return { events: [] };
   },
@@ -31,7 +36,7 @@ export default {
           constraints: {
             key: "user_id",
             constraint_type: "equals",
-            value: "1639153112296x840979326742023200",
+            value: this.currentUser.userId,
           },
         },
       }

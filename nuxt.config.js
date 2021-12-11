@@ -33,8 +33,21 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios"],
-
+  modules: ["@nuxtjs/axios","@nuxtjs/auth-next"],
+  auth: {
+    redirect: {
+      login: "/index"
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/login', method: 'post' },
+          logout: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/logout', method: 'post' },
+          user: { url: '/api/auth/user', method: 'get' }
+        }
+      }
+    }
+  },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ["~/assets/variables.scss"],
