@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app>
-      <v-app-bar-title>T2Meet</v-app-bar-title>
+      <nuxt-link to="/"> <v-app-bar-title>T2Meet</v-app-bar-title></nuxt-link>
     </v-app-bar>
 
     <v-main>
