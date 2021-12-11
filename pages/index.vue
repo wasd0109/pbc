@@ -22,6 +22,7 @@ export default {
       return this.$store.state.users.currentUser;
     },
   },
+
   data() {
     return { events: [] };
   },
@@ -49,7 +50,38 @@ export default {
         : false; // Find return truthy value if item is in array and falsy otherwise
       return !isRegistered;
     });
-    this.events = unregisteredEvents;
+    const userRes = await this.$axios.$get(
+      `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${this.currentUser.userId}`
+    );
+    const userTagIds = userRes.response.Tags;
+
+    const allTagsRes = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/tag_data"
+    );
+
+    const allTags = allTagsRes.response.results;
+
+    const userTags = allTags
+      .filter((tag) => {
+        return userTagIds.find((userTagId) => userTagId === tag._id);
+      })
+      .map((tag) => tag.Name);
+    console.log(userTags);
+
+    const sortedEvents = unregisteredEvents.sort((a, b) => {
+      const aMatch = a.Tag.filter((value) => userTags.includes(value));
+      const bMatch = b.Tag.filter((value) => userTags.includes(value));
+      if (aMatch.length > bMatch.length) {
+        return -1;
+      } else if (aMatch.length < bMatch.length) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    this.events = sortedEvents;
+    console.log(sortedEvents);
   },
   fetchOnServer: false,
   fetchKey: "events",
