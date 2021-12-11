@@ -1,7 +1,7 @@
 <template>
   <div>
     <Spinner color="white" v-if="$fetchState.pending"></Spinner>
-    <v-container class="cards">
+    <v-container v-else class="cards">
       <EventCard
         v-for="event of events"
         :key="event.id"
@@ -13,6 +13,8 @@
         ></EventCard
       >
     </v-container>
+    <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
+    <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
   </div>
 </template>
 
@@ -25,7 +27,7 @@ export default {
   },
 
   data() {
-    return { events: [] };
+    return { events: [], isRegistered: false, isRegistering: false };
   },
   async fetch() {
     const eventsRes = await this.$axios.$get(
@@ -88,6 +90,7 @@ export default {
   fetchKey: "events",
   methods: {
     async handleRegistration(eventId) {
+      this.isRegistering = true;
       console.log(eventId);
       await this.$axios.$post(
         "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/register-event",
@@ -100,6 +103,15 @@ export default {
         }
       );
       this.$fetch();
+      this.isRegistered = true;
+      this.isRegistering = false;
+    },
+  },
+  watch: {
+    isRegistered() {
+      if (this.isRegistered) {
+        setTimeout(() => (this.isRegistered = false), 3000);
+      }
     },
   },
 };
