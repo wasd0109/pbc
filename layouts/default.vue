@@ -1,9 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app>
-      <nuxt-link to="/"> <v-app-bar-title>T2Meet</v-app-bar-title></nuxt-link>
-    </v-app-bar>
-
+    <Navigation />
     <v-main>
       <Nuxt />
     </v-main>
@@ -35,3 +32,15 @@ a {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 </style>
+
+<script>
+import Navigation from '@/components/Navigation';
+export default {
+  // middleware: ['auth'],
+  components: {
+    Navigation
+  }
+};
+</script>
+
+

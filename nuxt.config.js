@@ -35,18 +35,34 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: ["@nuxtjs/axios","@nuxtjs/auth-next"],
   auth: {
+    scheme: 'refresh',
+    token: {
+      property: 'access_token',
+      maxAge: 1800,
+      global: true,
+      // type: 'Bearer'
+    },
+    refreshToken: {
+      property: 'refresh_token',
+      data: 'refresh_token',
+      maxAge: 60 * 60 * 24 * 30
+    },
+    user: {
+      property: 'user',
+     // autoFetch: true
+    },
     redirect: {
-      login: "login",
+      login: "/login",
       home: "/",
-      callback: 'login',
+      callback: false,
       logout: "/"
     },
     strategies: {
       local: {
         endpoints: {
-          login: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/login', method: 'post' },
+          login: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/login', method: 'post', propertyName: 'token' },
           logout: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/logout', method: 'post' },
-          // user: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/currentuser', method: 'get', propertyName: false }
+          user: { url: 'https://t2meet.bubbleapps.io/version-test/api/1.1/wf/currentuser', method: 'get' }
         }
       }
     }
