@@ -21,15 +21,24 @@ export default {
   async fetch() {
     // !! Hack for using Bubble backend workflow for search
     // TODO Find a way to do it through Bubble data API
-    const { response } = await this.$axios.$post(
-      "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/get-user-entries?userId=1639153112296x840979326742023200"
+    const { response } = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
+      {
+        params: {
+          constraints: {
+            key: "user_id",
+            constraint_type: "equals",
+            value: "1639153112296x840979326742023200",
+          },
+        },
+      }
     );
     const entries = response.results;
     this.entries = entries;
     const results = [];
     for (let entry of entries) {
       const { response } = await this.$axios.$get(
-        `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event/${entry.Event}`
+        `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event/${entry.event_id}`
       );
 
       const event = response;

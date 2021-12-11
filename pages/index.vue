@@ -21,11 +21,30 @@ export default {
     return { events: [] };
   },
   async fetch() {
-    const { response } = await this.$axios.$get(
+    const eventsRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
-
-    this.events = response.results;
+    const entriesRes = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
+      {
+        params: {
+          constraints: {
+            key: "user_id",
+            constraint_type: "equals",
+            value: "1639153112296x840979326742023200",
+          },
+        },
+      }
+    );
+    const events = eventsRes.response.results;
+    const entries = entriesRes.response.results;
+    const unregisteredEvents = events.filter((event) => {
+      const isRegistered = entries.find((entry) => entry.event_id == event._id)
+        ? true
+        : false; // Find return truthy value if item is in array and falsy otherwise
+      return !isRegistered;
+    });
+    this.events = unregisteredEvents;
   },
   fetchOnServer: false,
   fetchKey: "events",
@@ -37,11 +56,12 @@ export default {
         {},
         {
           params: {
-            eventId: eventId.toString(),
+            eventId: eventId,
             userId: "1639153112296x840979326742023200",
           },
         }
       );
+      this.$fetch();
     },
   },
 };
