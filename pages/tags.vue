@@ -1,6 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="container">
     <h1>Please select topics that interest you</h1>
+    <h2 v-if="$fetchState.pending"></h2>
     <div class="chip-container">
       <Chips
         v-for="tag of tags"
@@ -11,9 +12,7 @@
       />
     </div>
     <p v-if="error">Please select more than one tag</p>
-    <div class="btn-container">
-      <v-btn @click="confirmTagSelection">Confirm</v-btn>
-    </div>
+    <v-btn @click="confirmTagSelection">Confirm</v-btn>
   </v-container>
 </template>
 
@@ -67,7 +66,8 @@ export default {
 <style>
 .chip-container {
   display: flex;
-  justify-content: center;
+  justify-content: start;
+  flex-wrap: wrap;
 }
 
 .chip-container * {
@@ -78,9 +78,11 @@ export default {
   color: aquamarine;
 }
 
-.btn-container {
+.container {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 1rem;
+  flex-direction: column;
 }
 </style>
