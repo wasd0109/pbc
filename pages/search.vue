@@ -96,8 +96,8 @@ export default {
             console.log(eventTags);
             for (let selectedTag of this.selectedTags) {
               if (eventTags.includes(selectedTag.toLowerCase())) return true;
-              else return false;
             }
+            return false;
           });
         }
       }
