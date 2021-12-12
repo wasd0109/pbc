@@ -54,6 +54,11 @@ export default {
     this.eventList = eventList;
     this.filteredList = eventList;
   },
+  created() {
+    if (!this.currentUser) {
+      this.$router.push("/login");
+    }
+  },
   methods: {
     filterEventList(searchFilter, searchText, isOnlineOnly) {
       let filteredList = this.eventList;
