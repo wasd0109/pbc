@@ -25,6 +25,13 @@
             {{ tag }}
           </div>
         </div>
+        <v-card-actions>
+          <v-btn
+            :disabled="userAlreadyRegistered"
+            @click="handleRegistration(event._id)"
+            >{{ userAlreadyRegistered ? "Registered" : "Register" }}</v-btn
+          >
+        </v-card-actions>
         <h2>Attendees</h2>
         <v-list>
           <v-list-item v-for="attendant of attendees" :key="attendant._id"
@@ -37,6 +44,8 @@
         </v-list>
       </v-card-text>
     </v-card>
+    <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
+    <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
   </v-container>
 </template>
 
@@ -45,7 +54,47 @@ import Spinner from "../../components/Spinner.vue";
 export default {
   components: { Spinner },
   data() {
-    return { event: {}, attendees: [] };
+    return {
+      event: {},
+      attendees: [],
+      isRegistered: false,
+      isRegistering: false,
+      userAlreadyRegistered: false,
+    };
+  },
+  methods: {
+    async handleRegistration(eventId) {
+      this.isRegistering = true;
+      console.log(eventId);
+      await this.$axios.$post(
+        "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/register-event",
+        {},
+        {
+          params: {
+            eventId: eventId,
+            userId: this.currentUser.user_id,
+          },
+        }
+      );
+      this.$fetch();
+      this.isRegistered = true;
+      this.isRegistering = false;
+    },
+    async handleUnRegistration(entryId) {
+      this.isUnRegistering = true;
+      await this.$axios.$post(
+        "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/unregister-event",
+        {},
+        {
+          params: {
+            entryId,
+          },
+        }
+      );
+      this.$fetch();
+      this.isUnRegistering = false;
+      this.isUnRegistered = true;
+    },
   },
   async fetch() {
     const id = this.$route.params.id;
@@ -74,6 +123,9 @@ export default {
         `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${entry.user_id}`
       );
       attendees.push(userRes.response);
+      if (userRes.response._id === this.currentUser.user_id) {
+        this.userAlreadyRegistered = true;
+      }
     }
     this.attendees = attendees;
     console.log(this.attendees);
@@ -95,6 +147,17 @@ export default {
         hourDiff = 24 + hourDiff;
       }
       return hourDiff;
+    },
+    currentUser() {
+      console.log(this.$auth.$state.user);
+      return this.$auth.$state.user;
+    },
+  },
+  watch: {
+    isRegistered() {
+      if (this.isRegistered) {
+        setTimeout(() => (this.isRegistered = false), 3000);
+      }
     },
   },
 };
