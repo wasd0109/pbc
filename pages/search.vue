@@ -84,9 +84,12 @@ export default {
         }
       }
       if (isOnlineOnly) {
-        filteredList = filteredList.filter((event) => event["Is Online"]);
+        filteredList = filteredList.filter((event) => {
+          console.log(event["Is Online"]);
+          return event["Is Online"] === "Yes";
+        });
       }
-
+      console.log(filteredList);
       return filteredList;
     },
   },

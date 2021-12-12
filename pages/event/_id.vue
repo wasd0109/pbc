@@ -186,7 +186,6 @@ export default {
   padding: 0 0.5rem;
   border-radius: 25px;
   background-color: black;
-
   border-width: 10px;
 }
 #tags {
