@@ -3,7 +3,7 @@
     <v-toolbar dark class=" dp-sp-none">
       <v-toolbar-title class="headline text-uppercase md-5">
         <nuxt-link to="/" class="container-logo font-weight-bold black--text">
-          <v-app-bar-title class="teal--text text-capitalize">T2Meet</v-app-bar-title>
+          <div class="teal--text text-capitalize">T2Meet</div>
           <h1 style="display:none">
             T2Meet - Events for Tokyo Tech Students
           </h1>

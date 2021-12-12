@@ -1,5 +1,5 @@
 <template>
-  <v-card min-width="100%">
+  <v-card min-width="100%" class = "my-10">
     <nuxt-link :to="`/event/${event._id}`" nuxt as="div">
       <v-img
         :src="
@@ -14,7 +14,7 @@
         <v-card-subtitle>{{ event.Description }}</v-card-subtitle>
         <v-card-text>{{ startingTime }}</v-card-text>
         <v-chip class="tag" v-for="tag of event.Tag" :key="tag"
-          ><p>{{ tag }}</p></v-chip
+          ><p style="margin-bottom: 0">{{ tag }}</p></v-chip
         ></v-container
       >
     </nuxt-link>

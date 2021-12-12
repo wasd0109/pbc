@@ -25,8 +25,9 @@
             {{ tag }}
           </div>
         </div>
-        <v-card-actions>
+        <v-card-actions class="px-0 pb-5">
           <v-btn
+            class="teal"
             :disabled="userAlreadyRegistered"
             @click="handleRegistration(event._id)"
             >{{ userAlreadyRegistered ? "Registered" : "Register" }}</v-btn
