@@ -59,10 +59,10 @@ export default {
     };
   },
   methods: {
-    setUser(id) {
-      console.log(this);
-      this.$store.commit("users/setUser", id);
-    },
+    // setUser (user) {
+    //   console.log(this);
+    //   this.$store.commit('users/setUser', user);
+    // },
     async userLogin() {
       try {
         let res = await this.$auth.loginWith("local", {
@@ -74,37 +74,40 @@ export default {
         let token = user.token;
         // let expires = user.expires;
 
-        let res2 = await this.$axios.$get(
-          `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${user_id}`
-        );
-        let user_details = res2.response.authentication.email;
-        let user_final = { ...user_details, user_id };
-        console.log(user_final);
+        let res2 = await this.$axios.$get(`https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${user_id}`);
+        let user_details = res2.response;
+        console.log("details",user_details);
+        let user_final = {...user_details, user_id}
+        console.log(user_final)
 
-        await this.$auth.$storage.setUniversal("user", user_final, true);
-        console.log("user layout");
-        console.log(this.$auth.$state.user);
-        await this.$auth.$storage.setState("loggedIn", true);
+        await this.$auth.$storage.setUniversal('user', user_final)
 
-        this.$router.push({ path: `/` });
+        // console.log("user layout");
+        // console.log(this.$auth.$storage.user);
+        await this.$auth.$storage.setUniversal('loggedIn', true)
+        // console.log("token",this.$auth.$state.user)
+        if(this.$auth.$state.user.Tags && this.$auth.$state.user.Tags.length === 0) {
+          console.log("here here")
+          this.$router.push({ path: `/tags` });
+        } else {
+          this.$router.push({ path: `/` });
+        }
+
       } catch (err) {
         console.log(err);
       }
     },
     async logout() {
-      await this.$auth
-        .logout("local", { params: { user_id: this.$auth.$state.user.userId } })
-        .then((res) => {
-          this.$auth.$storage.setState("loggedIn", false);
-          this.$auth.$storage.setUser(null);
-          this.$auth.strategies.local.options.endpoints.user.headers[
-            "Authorization"
-          ] = null;
-        })
-        .catch((e) => {
-          this.error = e.response.data.error + "";
-        });
-    },
-  },
+      await this.$auth.logout('local',{params: {user_id: this.$auth.$state.user.userId}})
+      .then(res => {
+        this.$auth.$storage.setUniversal('loggedIn', false)
+        this.$auth.$storage.setUniversal('user',false)
+        // this.$auth.$storage.setUser(null)
+        // this.$auth.strategies.local.options.endpoints.user.headers['Authorization'] = null
+      }).catch(e => {
+        this.error = e.response.data.error + "";
+      });
+    }
+  }
 };
 </script>

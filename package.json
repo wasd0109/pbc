@@ -6,7 +6,8 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "serve": "/usr/local/opt/gnu-sed/libexec/gnubin/sed -i 's/<[/]html>//g' dist/index.html && /usr/local/opt/gnu-sed/libexec/gnubin/sed -i 's/<[/]body>//g' dist/index.html && ./routingdev.sh && rm -rf ..export/Arsen8848.github.io/_nuxt && cp -r ./dist/. ../export/Arsen8848.github.io"
   },
   "dependencies": {
     "@nuxtjs/auth-next": "5.0.0-1637745161.ea53f98",
