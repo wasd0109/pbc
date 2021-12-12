@@ -24,18 +24,18 @@
                 v-model="email"
                 label="Email Address"
                 outlined
-                prepend-icon="email"
+                prepend-icon="mdi-email-outline"
               />
               <v-text-field
                 v-model="password"
                 label="Password"
                 type="password"
                 outlined
-                prepend-icon="mdi-eye-off"
+                prepend-icon="mdi-lock"
               />
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary" type="submit">userLogin</v-btn>
+                <v-btn color="primary" type="submit">User Login</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-form>
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-
 export default {
   layout: "loginLayout",
   data() {
@@ -56,48 +55,56 @@ export default {
       token: null,
       user_id: null,
       error: null,
-      success: null
+      success: null,
     };
   },
   methods: {
-    setUser (id) {
+    setUser(id) {
       console.log(this);
-      this.$store.commit('users/setUser', id);
+      this.$store.commit("users/setUser", id);
     },
     async userLogin() {
       try {
-        let res = await this.$auth.loginWith('local', { params: {email: "chivalry@gmail.com", password: "123456"}} )
+        let res = await this.$auth.loginWith("local", {
+          params: { email: "chivalry@gmail.com", password: "123456" },
+        });
         console.log(res);
         let user = res.data.response;
         let user_id = user.user_id;
         let token = user.token;
         // let expires = user.expires;
 
-        let res2 = await this.$axios.$get(`https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${user_id}`);
+        let res2 = await this.$axios.$get(
+          `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${user_id}`
+        );
         let user_details = res2.response.authentication.email;
-        let user_final = {...user_details, user_id}
-        console.log(user_final)
+        let user_final = { ...user_details, user_id };
+        console.log(user_final);
 
-        await this.$auth.$storage.setUniversal('user', user_final, true)
+        await this.$auth.$storage.setUniversal("user", user_final, true);
         console.log("user layout");
         console.log(this.$auth.$state.user);
-        await this.$auth.$storage.setState('loggedIn', true)
+        await this.$auth.$storage.setState("loggedIn", true);
 
         this.$router.push({ path: `/` });
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     },
     async logout() {
-      await this.$auth.logout('local',{params: {user_id: this.$auth.$state.user.userId}})
-      .then(res => {
-        this.$auth.$storage.setState('loggedIn', false)
-        this.$auth.$storage.setUser(null)
-        this.$auth.strategies.local.options.endpoints.user.headers['Authorization'] = null
-      }).catch(e => {
-        this.error = e.response.data.error + "";
-      });
-    }
-  }
+      await this.$auth
+        .logout("local", { params: { user_id: this.$auth.$state.user.userId } })
+        .then((res) => {
+          this.$auth.$storage.setState("loggedIn", false);
+          this.$auth.$storage.setUser(null);
+          this.$auth.strategies.local.options.endpoints.user.headers[
+            "Authorization"
+          ] = null;
+        })
+        .catch((e) => {
+          this.error = e.response.data.error + "";
+        });
+    },
+  },
 };
 </script>
