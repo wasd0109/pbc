@@ -34,10 +34,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .tag {
   text-align: center;
   margin-right: 1rem;
   margin-top: 0.5rem;
 }
+
 </style>

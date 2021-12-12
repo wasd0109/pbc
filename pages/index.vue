@@ -1,7 +1,53 @@
 <template>
   <div>
     <Spinner color="white" v-if="$fetchState.pending"></Spinner>
-    <v-container v-else class="cards">
+    <v-carousel
+      :height="carouselHeight"
+      :prev-icon="false"
+      :next-icon="false"
+      :interval="1500000"
+      cycle
+      hide-delimiter-background
+      show-arrows-on-hover
+      class="mt-0 mb-9 carousel"
+    >
+      <v-carousel-item
+        v-for="item in items"
+        :key="item.id"
+        eager
+        class="carousel-item"
+      >
+        <div class="img-overlay"></div>
+        <v-img
+          @load="handleLoad()"
+          :src="item['Event Image']"
+          :to="`/event/${item._id}`"
+            nuxt
+          class="carousel-img"
+          id="carousel-img"
+          eager
+        >
+          <v-container class="fill-height pa-0 ma-0 pb-0 carousel-inner" fluid>
+            <v-row class="fill-height pb-0 mb-0 carousel-row" align="center">
+              <v-col class="carousel-col" cols="12">
+                <div v-show="imageLoaded" class="pa-0 carousel-div">
+                  <div class="carousel-top">
+                    <h2 v-text="item.Title" style="white-space: pre-line" />
+                  </div>
+                  <div class="carousel-bottom">
+                    <h3
+                      v-text="`${item.Description.substr(0, 80)}...`"
+                      style="white-space: pre-line"
+                    />
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-img>
+      </v-carousel-item>
+    </v-carousel>
+    <!-- <v-container v-else class="cards">
       <EventCard
         v-for="event of events"
         :key="event.id"
@@ -12,6 +58,103 @@
           >Register</v-btn
         ></EventCard
       >
+    </v-container> -->
+        <v-card-text
+        class="pt-10 pb-10 px-6 white--text"
+        style="font-size: 22px; font-weight: bold; text-align:center"
+      >
+        Explore
+      </v-card-text>
+    <v-container class="event-container">
+      <v-row
+        align="center"
+        class="justify-center justify-md-start event-container-row"
+      >
+        <v-col
+          v-for="event in events"
+          :key="event.id"
+          :event="event"
+          @register="handleRegistration"
+          class="xs event-container-col"
+          cols="12"
+          xl="3"
+          lg="4"
+          md="6"
+          sm="9"
+        >
+          <v-card
+            :to="`/event/${event._id}`"
+            nuxt
+            class="pa-0 pb-3 event-card"
+            hover
+          >
+            <div
+              v-if="!!event['Event Image']"
+              class="pt-0 event-card-inner"
+            >
+              <img
+                :src="event['Event Image']"
+                alt="event Post Image"
+                class="event-card-img"
+                onerror="/img/image-not-found.png"
+              />
+            </div>
+            <div v-else class="pt-0 event-card-inner">
+              <img
+                class="event-card-img"
+                alt="Image Not Found Image"
+                src="/img/image-not-found.png"
+              />
+            </div>
+            <v-card-text
+              v-if="event.Title && event.Title !== ''"
+              class="font-weight-bold jgreyest--text card-title"
+            >
+              {{ event.Title }}
+            </v-card-text>
+            <v-card-text
+              v-if="
+                  event.Description
+              "
+              class="pt-2 pb-1 px-6 jgreyest--text"
+              style="font-size: 16px; font-weight: bold;"
+            >
+              <span
+                class="mt-1"
+              >
+                {{ `${event.Description.substr(0,80)}...` }}
+              </span>
+
+            </v-card-text>
+            <v-card-text
+              v-if="
+                  event['Event Date (from)']
+              "
+              class="pt-2 pb-1 px-6 info--text"
+              style="font-size: 16px; font-weight: bold;"
+            >
+              <span
+                class="mt-1"
+              >
+                {{ event['Event Date (from)'].substr(0, event['Event Date (from)'].indexOf('T')).split('-').join('.') }}
+              </span>
+
+            </v-card-text>
+            <v-card-text>
+              <v-chip class="teal tag" v-for="tag of event.Tag" :key="tag"
+                ><p>{{ tag }}</p></v-chip
+              >
+            </v-card-text>
+            <div class="pa-4">
+              <v-card-text
+                class="jpurple white--text text-center text-20 card-details"
+              >
+                See Details
+              </v-card-text>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
     <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
     <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
@@ -26,13 +169,55 @@ export default {
     }
   },
   computed: {
+    carouselHeight() {
+      return '';
+    },
+
+    items() {
+      let random;
+      let len = this.events.length;
+
+      if (this.events.length > 12) {
+        random = this.rng(0,len-6)
+        let count = 0
+        let selected = []
+        this.events.slice(random,len-1).forEach((e) =>{
+          if(e['Event Image'] && e['Event Image'] !== '' && count <=5) {
+            selected.push(e);
+          }
+          count+=1;
+        })
+        console.log("selected",selected)
+        return selected
+      } else if (this.events.length > 0){
+        random = this.rng(0,this.events.length-1)
+        let count = 0
+        let selected = []
+        this.events.forEach((e) =>{
+          if(e['Event Image'] && e['Event Image'] !== ''&& count <=5) {
+            selected.push(e);
+          }
+          count+=1;
+        })
+        console.log("selected",selected)
+        return selected
+      } else {
+        return null
+      }
+
+    },
     currentUser() {
       return this.$auth.$state.user;
     },
   },
 
   data() {
-    return { events: [], isRegistered: false, isRegistering: false };
+    return {
+      imageCount: 0,
+      imageLoaded: false,
+      events: [],
+      isRegistered: false,
+      isRegistering: false };
   },
   async fetch() {
     const eventsRes = await this.$axios.$get(
@@ -96,6 +281,15 @@ export default {
   fetchOnServer: false,
   fetchKey: "events",
   methods: {
+    handleLoad() {
+      this.imageCount += 1;
+      if (this.imageCount >= 1) {
+        this.imageLoaded = true;
+      }
+    },
+    rng(min,max) {
+      return Math.random() * (max - min) + min;
+    },
     async handleRegistration(eventId) {
       this.isRegistering = true;
       console.log(eventId);
@@ -124,8 +318,18 @@ export default {
 };
 </script>
 
-<style>
-.cards {
+
+
+<style lang="scss" scoped>
+.tag {
+  text-align: center;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  p {
+    margin-bottom: 0;
+  }
+}
+/* .cards {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -136,5 +340,270 @@ export default {
 .cards * {
   text-decoration: none;
   margin-top: 10px;
-}
+} */
 </style>
+
+<style lang="scss" scoped>
+
+@import '~/assets/scss/global.scss';
+.index-container {
+  margin-bottom: 40px;
+}
+.event-container {
+  .event-container-row {
+    .event-container-col {
+      .event-card {
+        border-radius: 5px;
+        .event-card-inner {
+          height: 290px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          overflow: hidden;
+          @media screen and (max-width: 959px) {
+            height: 56vw;
+          }
+          @media screen and (max-width: 599px) {
+            height: 75vw;
+          }
+          .event-card-img {
+            width: auto;
+            height: 290px;
+            @media screen and (max-width: 959px) {
+              height: 56vw;
+            }
+            @media screen and (max-width: 599px) {
+              height: 75vw;
+            }
+            object-fit: cover;
+            border-radius: 5px 5px 0 0;
+          }
+        }
+      }
+    }
+  }
+}
+.card-title {
+  font-size: 26px;
+  line-height: 1.8rem;
+  padding: 8px 24px 4px;
+  @media screen and (max-width: $sp-max-width) {
+    font-size: 20px;
+    line-height: 1.5rem;
+    padding-top: 4px;
+  }
+}
+.card-details {
+  font-size: 20px;
+  @media screen and (max-width: $sp-max-width) {
+    font-size: 16px;
+  }
+}
+.carousel {
+  height: 33vw;
+  background-color: rgb(242, 242, 242);
+  // box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.5);
+  @media screen and (max-width: 1920px) {
+    height: 580px !important;
+  }
+  @media screen and (max-width: 1600px) {
+    height: 480px !important;
+  }
+  @media screen and (max-width: 1000px) {
+    height: 380px !important;
+  }
+  @media screen and (max-width: $sp-max-width) {
+    height: 320px !important;
+  }
+  .carousel-item {
+    height: 33vw;
+    position: relative;
+    width: 100%;
+    font-size: 0;
+    @media screen and (max-width: 1920px) {
+      height: 580px !important;
+    }
+    @media screen and (max-width: 1600px) {
+      height: 480px !important;
+    }
+    @media screen and (max-width: 1000px) {
+      height: 380px !important;
+    }
+    @media screen and (max-width: $sp-max-width) {
+      height: 320px !important;
+    }
+    .img-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(128,128,128,0.75);
+    }
+    #carousel-img {
+        filter: brightness(90%);
+    }
+    .carousel-img {
+      object-fit: cover;
+      height: 33vw;
+      @media screen and (max-width: 1920px) {
+        height: 580px !important;
+      }
+      @media screen and (max-width: 1600px) {
+        height: 480px !important;
+      }
+      @media screen and (max-width: 1000px) {
+        height: 380px !important;
+      }
+      @media screen and (max-width: $sp-max-width) {
+        height: 320px !important;
+      }
+      .carousel-inner {
+        .carousel-row {
+          .carousel-col {
+            .carousel-div {
+              max-width: 946px;
+              margin-left: 113px;
+              margin-bottom: 80px;
+              @media screen and (max-width: 1800px) {
+                margin-left: 90px;
+                max-width: 860px;
+              }
+              @media screen and (max-width: 1600px) {
+                margin-left: 80px;
+                max-width: 740px;
+              }
+              @media screen and (max-width: 1300px) {
+                margin-left: 50px;
+                max-width: 600px;
+                margin-top: 30px;
+                margin-bottom: 0;
+              }
+              @media screen and (max-width: 1000px) {
+                margin-left: 20px;
+                max-width: 500px;
+              }
+              @media screen and (max-width: 800px) {
+                margin-left: 15px;
+                max-width: 420px;
+              }
+              @media screen and (max-width: $sp-max-width) {
+                margin: 0 20px;
+                max-width: 380px;
+                padding: 0;
+              }
+              @media screen and (max-width: 450px) {
+                margin: 0 20px;
+                padding: 0;
+                margin-top: 80px;
+              }
+              .carousel-top {
+                margin-bottom: 25px;
+                @media screen and (max-width: 1300px) {
+                  margin-bottom: 16px;
+                }
+                @media screen and (max-width: $sp-max-width) {
+                  max-width: 300px;
+                }
+                h2 {
+                  margin: 0 0 12px;
+                  object-fit: contain;
+                  -webkit-text-stroke: 1px rgba(0, 0, 0, 0);
+                  // font-family: 'Source Sans Pro';
+                  font-size: 50px;
+                  font-weight: bold;
+                  font-stretch: normal;
+                  font-style: normal;
+                  line-height: 1.2;
+                  letter-spacing: normal;
+                  text-align: left;
+                  color: $jblue;
+                  @media screen and (max-width: 1800px) {
+                    font-size: 45px;
+                  }
+                  @media screen and (max-width: 1600px) {
+                    font-size: 38px;
+                  }
+                  @media screen and (max-width: 1300px) {
+                    font-size: 34px;
+                  }
+                  @media screen and (max-width: 1000px) {
+                    font-size: 30px;
+                  }
+                  @media screen and (max-width: 800px) {
+                    font-size: 28px;
+                  }
+                  @media screen and (max-width: $sp-max-width) {
+                    font-size: 24px;
+                  }
+                  @media screen and (max-width: 400px) {
+                    font-size: 22px;
+                  }
+                }
+              }
+              .carousel-bottom {
+                h3 {
+                  margin: 12px 0px 0 0;
+                  object-fit: contain;
+                  -webkit-text-stroke: 1px rgba(0, 0, 0, 0);
+                  // font-family: 'Source Sans Pro';
+                  font-size: 30px;
+                  font-weight: bold;
+                  font-stretch: normal;
+                  font-style: normal;
+                  line-height: 1.33;
+                  letter-spacing: normal;
+                  text-align: left;
+                  color: #4b4b4b;
+                  @media screen and (max-width: 1800px) {
+                    font-size: 28px;
+                  }
+                  @media screen and (max-width: 1600px) {
+                    font-size: 26px;
+                  }
+                  @media screen and (max-width: 1300px) {
+                    font-size: 24px;
+                  }
+                  @media screen and (max-width: 1000px) {
+                    font-size: 22px;
+                  }
+                  @media screen and (max-width: 800px) {
+                    font-size: 20px;
+                  }
+                  @media screen and (max-width: $sp-max-width) {
+                    font-size: 18px;
+                  }
+                  @media screen and (max-width: 400px) {
+                    font-size: 16px;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .carousel-item:last-child {
+    .carousel-img {
+      .carousel-inner {
+        .carousel-row {
+          .carousel-col {
+            .carousel-div {
+              @media screen and (max-width: 1000px) {
+                margin: 0 20px;
+                padding: 0;
+                margin-top: 0px;
+                margin-bottom: 30px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+</style>
+
