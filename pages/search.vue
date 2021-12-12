@@ -11,7 +11,7 @@
     <v-checkbox v-model="isOnlineOnly" label="Online Only"></v-checkbox>
     <Spinner color="white" v-if="$fetchState.pending"></Spinner>
     <v-list v-if="eventList.length">
-      <v-list-item v-for="event of filteredList">
+      <v-list-item v-for="event of filteredList" :key="event._id">
         <v-list-item-avatar
           ><v-img
             :src="
@@ -21,11 +21,14 @@
           ></v-img
         ></v-list-item-avatar>
         <v-list-item-title>{{ event.Title }}</v-list-item-title>
-        <v-list-item-action
-          ><v-btn @click="" elevation="0" nuxt :to="`/event/${event._id}`"
-            ><v-icon>mdi-chevron-right</v-icon></v-btn
-          >
-        </v-list-item-action>
+        <v-list-item-action-text
+          v-if="event.isRegistered"
+          class="registered-text"
+          >REGISTERED</v-list-item-action-text
+        >
+        <v-btn elevation="0" nuxt :to="`/event/${event._id}`"
+          ><v-icon>mdi-chevron-right</v-icon></v-btn
+        >
       </v-list-item>
     </v-list>
   </v-container>
@@ -37,8 +40,19 @@ export default {
     const { response } = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
-    this.eventList = response.results;
-    this.filteredList = response.results;
+    const entryRes = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry"
+    );
+    const entriesIds = entryRes.response.results
+      .filter((entry) => entry.user_id === this.currentUser.user_id)
+      .map((entry) => entry.event_id);
+    const eventList = response.results.map((event) => ({
+      ...event,
+      isRegistered: entriesIds.includes(event._id),
+    }));
+
+    this.eventList = eventList;
+    this.filteredList = eventList;
   },
   methods: {
     filterEventList(searchFilter, searchText, isOnlineOnly) {
@@ -65,7 +79,13 @@ export default {
       if (isOnlineOnly) {
         filteredList = filteredList.filter((event) => event["Is Online"]);
       }
+
       return filteredList;
+    },
+  },
+  computed: {
+    currentUser() {
+      return this.$auth.$state.user;
     },
   },
   data() {
@@ -97,4 +117,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.registered-text {
+  margin-right: 1rem;
+}
+</style>
