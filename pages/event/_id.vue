@@ -49,12 +49,13 @@ export default {
   },
   async fetch() {
     const id = this.$route.params.id;
-    console.log(id);
     const res = await this.$axios.$get(
       `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event/${id}`
     );
 
     this.event = res.response;
+    console.log(this.event);
+    // TODO Bugs with querying Entries of certain event ID
     const entriesRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
       {
@@ -62,12 +63,13 @@ export default {
           constraints: {
             key: "event_id",
             constraint_type: "equals",
-            value: this.event._id,
+            value: id,
           },
         },
       }
     );
     const entries = entriesRes.response.results;
+    console.log(entries);
     let attendees = [];
     for (let entry of entries) {
       const userRes = await this.$axios.$get(
