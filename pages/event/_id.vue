@@ -40,6 +40,10 @@
             ><v-list-item-title>{{
               attendant["First Name"] + " " + attendant["Last Name"]
             }}</v-list-item-title>
+            <v-list-item-action-text
+              v-if="attendant._id === currentUser.user_id"
+              >YOURSELF</v-list-item-action-text
+            >
           </v-list-item>
         </v-list>
         <p v-else>Be the first one to register!</p>
