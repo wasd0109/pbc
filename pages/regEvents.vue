@@ -2,6 +2,7 @@
   <div>
     <v-container>
       <Spinner color="white" v-if="$fetchState.pending"></Spinner>
+      <h2 v-else-if="registeredEvents.length == 0">No registered events</h2>
       <div class="cards" v-else>
         <EventCard
           v-for="event of registeredEvents"

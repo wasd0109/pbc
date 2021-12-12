@@ -25,6 +25,16 @@
             {{ tag }}
           </div>
         </div>
+        <h2>Attendees</h2>
+        <v-list>
+          <v-list-item v-for="attendant of attendees" :key="attendant._id"
+            ><v-list-item-avatar
+              ><v-icon>mdi-account</v-icon></v-list-item-avatar
+            ><v-list-item-title>{{
+              attendant["First Name"] + " " + attendant["Last Name"]
+            }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
       </v-card-text>
     </v-card>
   </v-container>
@@ -35,7 +45,7 @@ import Spinner from "../../components/Spinner.vue";
 export default {
   components: { Spinner },
   data() {
-    return { event: {} };
+    return { event: {}, attendees: [] };
   },
   async fetch() {
     const id = this.$route.params.id;
@@ -45,7 +55,28 @@ export default {
     );
 
     this.event = res.response;
-    // event.eventDate = new Date(event.eventDate).toLocaleString();
+    const entriesRes = await this.$axios.$get(
+      "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
+      {
+        params: {
+          constraints: {
+            key: "event_id",
+            constraint_type: "equals",
+            value: this.event._id,
+          },
+        },
+      }
+    );
+    const entries = entriesRes.response.results;
+    let attendees = [];
+    for (let entry of entries) {
+      const userRes = await this.$axios.$get(
+        `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${entry.user_id}`
+      );
+      attendees.push(userRes.response);
+    }
+    this.attendees = attendees;
+    console.log(this.attendees);
   },
   fetchOnServer: false,
   fetchKey: "event",
