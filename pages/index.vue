@@ -248,12 +248,16 @@ export default {
       .filter((tag) => {
         return userTagIds.find((userTagId) => userTagId === tag._id);
       })
-      .map((tag) => tag.Name);
+      .map((tag) => tag.Name.toLowerCase());
     console.log(userTags);
 
     const sortedEvents = unregisteredEvents.sort((a, b) => {
-      const aMatch = a.Tag.filter((value) => userTags.includes(value));
-      const bMatch = b.Tag.filter((value) => userTags.includes(value));
+      const aMatch = a.Tag.filter((value) =>
+        userTags.includes(value.toLowerCase())
+      );
+      const bMatch = b.Tag.filter((value) =>
+        userTags.includes(value.toLowerCase())
+      );
       if (aMatch.length > bMatch.length) {
         return -1;
       } else if (aMatch.length < bMatch.length) {
