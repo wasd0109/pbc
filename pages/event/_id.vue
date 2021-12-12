@@ -25,18 +25,32 @@
             {{ tag }}
           </div>
         </div>
+        <v-card-actions>
+          <v-btn
+            :disabled="userAlreadyRegistered"
+            @click="handleRegistration(event._id)"
+            >{{ userAlreadyRegistered ? "Registered" : "Register" }}</v-btn
+          >
+        </v-card-actions>
         <h2>Attendees</h2>
-        <v-list>
+        <v-list v-if="attendees.length">
           <v-list-item v-for="attendant of attendees" :key="attendant._id"
             ><v-list-item-avatar
               ><v-icon>mdi-account</v-icon></v-list-item-avatar
             ><v-list-item-title>{{
               attendant["First Name"] + " " + attendant["Last Name"]
             }}</v-list-item-title>
+            <v-list-item-action-text
+              v-if="attendant._id === currentUser.user_id"
+              >YOURSELF</v-list-item-action-text
+            >
           </v-list-item>
         </v-list>
+        <p v-else>Be the first one to register!</p>
       </v-card-text>
     </v-card>
+    <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
+    <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
   </v-container>
 </template>
 
@@ -45,16 +59,57 @@ import Spinner from "../../components/Spinner.vue";
 export default {
   components: { Spinner },
   data() {
-    return { event: {}, attendees: [] };
+    return {
+      event: {},
+      attendees: [],
+      isRegistered: false,
+      isRegistering: false,
+      userAlreadyRegistered: false,
+    };
+  },
+  methods: {
+    async handleRegistration(eventId) {
+      this.isRegistering = true;
+      console.log(eventId);
+      await this.$axios.$post(
+        "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/register-event",
+        {},
+        {
+          params: {
+            eventId: eventId,
+            userId: this.currentUser.user_id,
+          },
+        }
+      );
+      this.$fetch();
+      this.isRegistered = true;
+      this.isRegistering = false;
+    },
+    async handleUnRegistration(entryId) {
+      this.isUnRegistering = true;
+      await this.$axios.$post(
+        "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/unregister-event",
+        {},
+        {
+          params: {
+            entryId,
+          },
+        }
+      );
+      this.$fetch();
+      this.isUnRegistering = false;
+      this.isUnRegistered = true;
+    },
   },
   async fetch() {
     const id = this.$route.params.id;
-    console.log(id);
     const res = await this.$axios.$get(
       `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event/${id}`
     );
 
     this.event = res.response;
+
+    // TODO Bugs with querying Entries of certain event ID
     const entriesRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/entry",
       {
@@ -62,18 +117,25 @@ export default {
           constraints: {
             key: "event_id",
             constraint_type: "equals",
-            value: this.event._id,
+            value: res.response._id,
           },
         },
       }
     );
-    const entries = entriesRes.response.results;
+
+    const entries = entriesRes.response.results.filter(
+      (entry) => entry.event_id === this.event._id
+    );
+
     let attendees = [];
     for (let entry of entries) {
       const userRes = await this.$axios.$get(
         `https://t2meet.bubbleapps.io/version-test/api/1.1/obj/user/${entry.user_id}`
       );
       attendees.push(userRes.response);
+      if (userRes.response._id === this.currentUser.user_id) {
+        this.userAlreadyRegistered = true;
+      }
     }
     this.attendees = attendees;
     console.log(this.attendees);
@@ -95,6 +157,17 @@ export default {
         hourDiff = 24 + hourDiff;
       }
       return hourDiff;
+    },
+    currentUser() {
+      console.log(this.$auth.$state.user);
+      return this.$auth.$state.user;
+    },
+  },
+  watch: {
+    isRegistered() {
+      if (this.isRegistered) {
+        setTimeout(() => (this.isRegistered = false), 3000);
+      }
     },
   },
 };

@@ -22,7 +22,7 @@
           @load="handleLoad()"
           :src="item['Event Image']"
           :to="`/event/${item._id}`"
-            nuxt
+          nuxt
           class="carousel-img"
           id="carousel-img"
           eager
@@ -89,10 +89,7 @@
             class="pa-0 pb-3 event-card"
             hover
           >
-            <div
-              v-if="!!event['Event Image']"
-              class="pt-0 event-card-inner"
-            >
+            <div v-if="!!event['Event Image']" class="pt-0 event-card-inner">
               <img
                 :src="event['Event Image']"
                 alt="event Post Image"
@@ -114,32 +111,27 @@
               {{ event.Title }}
             </v-card-text>
             <v-card-text
-              v-if="
-                  event.Description
-              "
+              v-if="event.Description"
               class="pt-2 pb-1 px-6 jgreyest--text"
-              style="font-size: 16px; font-weight: bold;"
+              style="font-size: 16px; font-weight: bold"
             >
-              <span
-                class="mt-1"
-              >
-                {{ `${event.Description.substr(0,80)}...` }}
+              <span class="mt-1">
+                {{ `${event.Description.substr(0, 80)}...` }}
               </span>
-
             </v-card-text>
             <v-card-text
-              v-if="
-                  event['Event Date (from)']
-              "
+              v-if="event['Event Date (from)']"
               class="pt-2 pb-1 px-6 info--text"
-              style="font-size: 16px; font-weight: bold;"
+              style="font-size: 16px; font-weight: bold"
             >
-              <span
-                class="mt-1"
-              >
-                {{ event['Event Date (from)'].substr(0, event['Event Date (from)'].indexOf('T')).split('-').join('.') }}
+              <span class="mt-1">
+                {{
+                  event["Event Date (from)"]
+                    .substr(0, event["Event Date (from)"].indexOf("T"))
+                    .split("-")
+                    .join(".")
+                }}
               </span>
-
             </v-card-text>
             <v-card-text>
               <v-chip class="teal tag" v-for="tag of event.Tag" :key="tag"
@@ -157,8 +149,6 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar v-model="isRegistering" app>Registering</v-snackbar>
-    <v-snackbar v-model="isRegistered" app>Event Registered</v-snackbar>
   </div>
 </template>
 
@@ -166,7 +156,7 @@
 export default {
   computed: {
     carouselHeight() {
-      return '';
+      return "";
     },
 
     items() {
@@ -174,33 +164,32 @@ export default {
       let len = this.events.length;
 
       if (this.events.length > 12) {
-        random = this.rng(0,len-6)
-        let count = 0
-        let selected = []
-        this.events.slice(random,len-1).forEach((e) =>{
-          if(e['Event Image'] && e['Event Image'] !== '' && count <=5) {
+        random = this.rng(0, len - 6);
+        let count = 0;
+        let selected = [];
+        this.events.slice(random, len - 1).forEach((e) => {
+          if (e["Event Image"] && e["Event Image"] !== "" && count <= 5) {
             selected.push(e);
           }
-          count+=1;
-        })
-        console.log("selected",selected)
-        return selected
-      } else if (this.events.length > 0){
-        random = this.rng(0,this.events.length-1)
-        let count = 0
-        let selected = []
-        this.events.forEach((e) =>{
-          if(e['Event Image'] && e['Event Image'] !== ''&& count <=5) {
+          count += 1;
+        });
+        console.log("selected", selected);
+        return selected;
+      } else if (this.events.length > 0) {
+        random = this.rng(0, this.events.length - 1);
+        let count = 0;
+        let selected = [];
+        this.events.forEach((e) => {
+          if (e["Event Image"] && e["Event Image"] !== "" && count <= 5) {
             selected.push(e);
           }
-          count+=1;
-        })
-        console.log("selected",selected)
-        return selected
+          count += 1;
+        });
+        console.log("selected", selected);
+        return selected;
       } else {
-        return null
+        return null;
       }
-
     },
     currentUser() {
 
@@ -213,8 +202,7 @@ export default {
       imageCount: 0,
       imageLoaded: false,
       events: [],
-      isRegistered: false,
-      isRegistering: false };
+    };
   },
   async fetch() {
     // console.log("here here here")
@@ -239,7 +227,7 @@ export default {
         },
       }
     );
-    console.log("entriesRes",entriesRes);
+    console.log("entriesRes", entriesRes);
     const events = eventsRes.response.results;
     const entries = entriesRes.response.results;
     const unregisteredEvents = events.filter((event) => {
@@ -263,12 +251,16 @@ export default {
       .filter((tag) => {
         return userTagIds.find((userTagId) => userTagId === tag._id);
       })
-      .map((tag) => tag.Name);
+      .map((tag) => tag.Name.toLowerCase());
     console.log(userTags);
 
     const sortedEvents = unregisteredEvents.sort((a, b) => {
-      const aMatch = a.Tag.filter((value) => userTags.includes(value));
-      const bMatch = b.Tag.filter((value) => userTags.includes(value));
+      const aMatch = a.Tag.filter((value) =>
+        userTags.includes(value.toLowerCase())
+      );
+      const bMatch = b.Tag.filter((value) =>
+        userTags.includes(value.toLowerCase())
+      );
       if (aMatch.length > bMatch.length) {
         return -1;
       } else if (aMatch.length < bMatch.length) {
@@ -290,7 +282,7 @@ export default {
         this.imageLoaded = true;
       }
     },
-    rng(min,max) {
+    rng(min, max) {
       return Math.random() * (max - min) + min;
     },
     async handleRegistration(eventId) {
@@ -307,21 +299,10 @@ export default {
         }
       );
       this.$fetch();
-      this.isRegistered = true;
-      this.isRegistering = false;
-    },
-  },
-  watch: {
-    isRegistered() {
-      if (this.isRegistered) {
-        setTimeout(() => (this.isRegistered = false), 3000);
-      }
     },
   },
 };
 </script>
-
-
 
 <style lang="scss" scoped>
 .tag {
@@ -347,8 +328,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-
-@import '~/assets/scss/global.scss';
+@import "~/assets/scss/global.scss";
 .index-container {
   margin-bottom: 40px;
 }
@@ -441,10 +421,10 @@ export default {
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(128,128,128,0.75);
+      background-color: rgba(128, 128, 128, 0.75);
     }
     #carousel-img {
-        filter: brightness(90%);
+      filter: brightness(90%);
     }
     .carousel-img {
       object-fit: cover;
@@ -606,7 +586,4 @@ export default {
     }
   }
 }
-
-
 </style>
-

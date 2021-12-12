@@ -24,18 +24,18 @@
                 v-model="email"
                 label="Email Address"
                 outlined
-                prepend-icon="email"
+                prepend-icon="mdi-email-outline"
               />
               <v-text-field
                 v-model="password"
                 label="Password"
                 type="password"
                 outlined
-                prepend-icon="mdi-eye-off"
+                prepend-icon="mdi-lock"
               />
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary" type="submit">userLogin</v-btn>
+                <v-btn color="primary" type="submit">User Login</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-form>
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-
 export default {
   layout: "loginLayout",
   data() {
@@ -56,7 +55,7 @@ export default {
       token: null,
       user_id: null,
       error: null,
-      success: null
+      success: null,
     };
   },
   methods: {
@@ -66,7 +65,9 @@ export default {
     // },
     async userLogin() {
       try {
-        let res = await this.$auth.loginWith('local', { params: {email: "chivalry@gmail.com", password: "123456"}} )
+        let res = await this.$auth.loginWith("local", {
+          params: { email: "chivalry@gmail.com", password: "123456" },
+        });
         console.log(res);
         let user = res.data.response;
         let user_id = user.user_id;
@@ -93,7 +94,7 @@ export default {
         }
 
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     },
     async logout() {
