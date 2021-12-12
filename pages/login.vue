@@ -65,9 +65,18 @@ export default {
     // },
     async userLogin() {
       try {
-        let res = await this.$auth.loginWith("local", {
-          params: { email: "chivalry@gmail.com", password: "123456" },
-        });
+        let res;
+        // console.log(this.email, this.password)
+        if(this.email === "" && this.password === "") {
+          res = await this.$auth.loginWith("local", {
+            params: { email: "abc@gmail.com", password: "123456" },
+          });
+        } else {
+          res = await this.$auth.loginWith("local", {
+            params: { email: this.email, password: this.password },
+          });
+        }
+
         console.log(res);
         let user = res.data.response;
         let user_id = user.user_id;
@@ -79,14 +88,15 @@ export default {
         console.log("details",user_details);
         let user_final = {...user_details, user_id}
         console.log(user_final)
+        this.error = null;
 
         await this.$auth.$storage.setUniversal('user', user_final)
 
         // console.log("user layout");
         // console.log(this.$auth.$storage.user);
         await this.$auth.$storage.setUniversal('loggedIn', true)
-        // console.log("token",this.$auth.$state.user)
-        if(this.$auth.$state.user.Tags && this.$auth.$state.user.Tags.length === 0) {
+        console.log("tags",this.$auth.$state.user)
+        if(!this.$auth.$state.user.Tags || this.$auth.$state.user.Tags.length === 0) {
           console.log("here here")
           this.$router.push({ path: `/tags` });
         } else {
@@ -94,7 +104,9 @@ export default {
         }
 
       } catch (err) {
-        console.log(err);
+        this.error = "Something went wrong. Please try again.";
+        this.success = null;
+        console.log('problem',err);
       }
     },
     async logout() {

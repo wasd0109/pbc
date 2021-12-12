@@ -47,7 +47,9 @@ export default {
         },
       }
     );
-    const entries = response.results;
+    const entries = response.results.filter(entry => {
+      return entry.user_id === this.currentUser.user_id
+    });
     this.entries = entries;
     const results = [];
     for (let entry of entries) {

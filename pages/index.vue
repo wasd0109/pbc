@@ -5,7 +5,7 @@
       :height="carouselHeight"
       :prev-icon="false"
       :next-icon="false"
-      :interval="1500000"
+      :interval="3000"
       cycle
       hide-delimiter-background
       show-arrows-on-hover
@@ -111,6 +111,47 @@
               {{ event.Title }}
             </v-card-text>
             <v-card-text
+              v-if="
+                  event.Location !== '' && event['Is Online'] === 'No'
+              "
+              class="pt-2 pb-1 px-6 jblackest--text"
+              style="font-size: 16px; font-weight: bold;"
+            >
+              <v-icon color="jblackest" size="18">mdi-map-marker</v-icon>
+              <!-- <span class="font-weight-bold">
+                Location:
+              </span> -->
+              <span
+                class="mt-1"
+              >
+                {{
+                  event.Location
+                }}
+              </span>
+
+            </v-card-text>
+            <v-card-text
+              v-if="
+                  event.Location !== '' && event['Is Online'] === 'Yes'
+              "
+              class="pt-2 pb-1 px-6 jblackest--text"
+              style="font-size: 16px; font-weight: bold;"
+            >
+              <!-- <v-icon color="jblackest" size="18">mdi-map-marker</v-icon> -->
+              <!-- <span class="font-weight-bold">
+                Location:
+              </span> -->
+              <span
+                v-if="
+                  event['Is Online'] === 'Yes'
+                "
+                class="mt-1"
+              >
+                Online
+              </span>
+
+            </v-card-text>
+            <v-card-text
               v-if="event.Description"
               class="pt-2 pb-1 px-6 jgreyest--text"
               style="font-size: 16px; font-weight: bold"
@@ -207,10 +248,10 @@ export default {
   async fetch() {
     // console.log("here here here")
     // console.log(this.$auth.$storage.getUniversal('loggedIn'));
-    // if(!this.$auth.$storage.getUniversal('loggedIn')) {
-    //   this.$router.push({path: '/login'});
-    //   return
-    // }
+    if(!this.$auth.$storage.getUniversal('loggedIn')) {
+      this.$router.push({path: '/login'});
+      return
+    }
     const eventsRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
@@ -445,9 +486,11 @@ export default {
         .carousel-row {
           .carousel-col {
             .carousel-div {
+              background-color: rgba(255,255,255,0.8);
               max-width: 946px;
               margin-left: 113px;
               margin-bottom: 80px;
+              // z-index: 600;
               @media screen and (max-width: 1800px) {
                 margin-left: 90px;
                 max-width: 860px;
@@ -481,7 +524,9 @@ export default {
                 margin-top: 80px;
               }
               .carousel-top {
+                padding: 10px;
                 margin-bottom: 25px;
+                padding-bottom: 0;
                 @media screen and (max-width: 1300px) {
                   margin-bottom: 16px;
                 }
@@ -525,6 +570,8 @@ export default {
                 }
               }
               .carousel-bottom {
+                padding: 10px;
+                padding-top: 0;
                 h3 {
                   margin: 12px 0px 0 0;
                   object-fit: contain;
