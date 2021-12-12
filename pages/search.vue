@@ -55,7 +55,6 @@ export default {
     this.filteredList = eventList;
   },
   created() {
-    console.log(this.currentUser);
     if (!this.currentUser) {
       this.$router.push("/login");
     }

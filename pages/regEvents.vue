@@ -42,7 +42,7 @@ export default {
           constraints: {
             key: "user_id",
             constraint_type: "equals",
-            value: "1639153112296x840979326742023200",
+            value: this.currentUser.user_id,
           },
         },
       }
@@ -63,6 +63,17 @@ export default {
       results.push(event);
     }
     this.registeredEvents = results;
+  },
+  created() {
+    console.log(this.currentUser);
+    if (!this.currentUser) {
+      this.$router.push("/login");
+    }
+  },
+  computed: {
+    currentUser() {
+      return this.$auth.$state.user;
+    },
   },
   methods: {
     async handleUnRegistration(entryId) {
