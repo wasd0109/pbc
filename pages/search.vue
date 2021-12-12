@@ -10,8 +10,13 @@
     </v-text-field>
     <v-checkbox v-model="isOnlineOnly" label="Online Only"></v-checkbox>
     <Spinner color="white" v-if="$fetchState.pending"></Spinner>
-    <v-list v-if="eventList.length">
-      <v-list-item v-for="event of filteredList" :key="event._id">
+    <v-list id="search-list" v-if="eventList.length">
+      <v-list-item
+        v-for="event of filteredList"
+        :key="event._id"
+        nuxt
+        :to="`/event/${event._id}`"
+      >
         <v-list-item-avatar
           ><v-img
             :src="
@@ -25,9 +30,6 @@
           v-if="event.isRegistered"
           class="registered-text"
           >REGISTERED</v-list-item-action-text
-        >
-        <v-btn elevation="0" nuxt :to="`/event/${event._id}`"
-          ><v-icon>mdi-chevron-right</v-icon></v-btn
         >
       </v-list-item>
     </v-list>
@@ -125,5 +127,9 @@ export default {
 <style scoped>
 .registered-text {
   margin-right: 1rem;
+}
+#search-list {
+  display: flex;
+  flex-direction: column;
 }
 </style>
