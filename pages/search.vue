@@ -92,13 +92,11 @@ export default {
       if (searchFilter === "Tags") {
         {
           filteredList = this.eventList.filter((event) => {
-            const eventTags = event["Tag"];
+            const eventTags = event["Tag"].map((tag) => tag.toLowerCase());
             console.log(eventTags);
-            for (let eventTag of eventTags) {
-              if (this.selectedTags.includes(eventTag)) {
-                return true;
-              }
-              return false;
+            for (let selectedTag of this.selectedTags) {
+              if (eventTags.includes(selectedTag.toLowerCase())) return true;
+              else return false;
             }
           });
         }
