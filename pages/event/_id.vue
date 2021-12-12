@@ -19,7 +19,7 @@
         <p class="text-sm-body-2">Location: {{ event.Location }}</p>
         <p class="text-sm-body-2">Starting time: {{ startingTime }}</p>
         <p class="text-sm-body-2">Ending time: {{ endingTime }}</p>
-        <p class="text-sm-body-2">Duration: {{ duration }}hr</p>
+        <p class="text-sm-body-2">Duration: {{ duration }}</p>
         <div id="tags">
           <div v-for="tag of event.Tags" :key="tag" class="tag">
             {{ tag }}
@@ -150,13 +150,20 @@ export default {
       return new Date(this.event["Event Date (to)"]).toLocaleString();
     },
     duration() {
-      const startHours = new Date(this.event["Event Date (from)"]).getHours();
-      const endHours = new Date(this.event["Event Date (to)"]).getHours();
-      let hourDiff = endHours - startHours;
-      if (hourDiff < 0) {
-        hourDiff = 24 + hourDiff;
-      }
-      return hourDiff;
+      const diffInMs = Math.abs(
+        new Date(this.event["Event Date (to)"]) -
+          new Date(this.event["Event Date (from)"])
+      );
+      const minutesDuration = Math.floor(diffInMs / 1000 / 60);
+      console.log(minutesDuration);
+      const hours = Math.floor(minutesDuration / 60);
+      const minutes = minutesDuration % 60;
+      console.log(hours);
+      return (
+        (hours ? `${hours} hours` : "") +
+        " " +
+        (minutes ? `${minutes} minutes` : "")
+      );
     },
     currentUser() {
       console.log(this.$auth.$state.user);
