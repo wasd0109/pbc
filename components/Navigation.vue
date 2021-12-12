@@ -41,11 +41,16 @@ export default {
     async logout() {
       console.log("abc");
       console.log("auth user")
-      console.log(this.$auth.$state.user);
+      console.log(this.$auth.$storage.getUniversal('user'));
 
-      if(this.$auth.$state.user) {
-        await this.$auth.logout('local',{params: {user_id: this.$auth.$state.user.user_id}}).catch(e => {
-        console.log(e);
+      if(this.$auth.$storage.getUniversal('user')) {
+        await this.$auth.logout('local',{params: {user_id: this.$auth.$storage.getUniversal('user').user_id}}).then(
+          res => {
+            this.$auth.$storage.setUniversal('loggedIn', false)
+            this.$auth.$storage.setUniversal('user',false)
+          }
+        ).catch(e => {
+            console.log(e);
         });
       }
       this.$router.push({path: '/login'});

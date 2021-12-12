@@ -18,6 +18,11 @@
 
 <script>
 export default {
+  computed: {
+    currentUser() {
+      return this.$auth.$storage.getUniversal('user')
+    }
+  },
   data() {
     return {
       tags: [],
@@ -47,6 +52,7 @@ export default {
       console.log(this.selectedTags);
     },
     async confirmTagSelection() {
+      console.log("CU",this.currentUser);
       if (this.selectedTags.length <= 0) return (this.error = true);
       console.log(this.selectedTags);
       const tag_ids = this.selectedTags.map((selectedTag) => selectedTag._id);
@@ -54,14 +60,16 @@ export default {
         "https://t2meet.bubbleapps.io/version-test/api/1.1/wf/add-tags-for-users",
         {
           tag_ids,
-          user_id: "1639153112296x840979326742023200",
+          user_id: this.currentUser.user_id,
         }
       );
       console.log(response);
+      this.$router.push({ path: '/'});
     },
   },
 };
 </script>
+
 
 <style>
 .chip-container {

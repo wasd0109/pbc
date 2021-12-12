@@ -61,6 +61,7 @@
     </v-container> -->
         <v-card-text
         class="pt-10 pb-10 px-6 white--text"
+        v-show="imageLoaded"
         style="font-size: 22px; font-weight: bold; text-align:center"
       >
         Explore
@@ -163,11 +164,6 @@
 
 <script>
 export default {
-  middleware({ store, redirect }) {
-    if(!store.$auth.loggedIn) {
-      redirect('/login');
-    }
-  },
   computed: {
     carouselHeight() {
       return '';
@@ -207,7 +203,8 @@ export default {
 
     },
     currentUser() {
-      return this.$auth.$state.user;
+
+      return this.$auth.$storage.getUniversal('user')
     },
   },
 
@@ -220,6 +217,12 @@ export default {
       isRegistering: false };
   },
   async fetch() {
+    // console.log("here here here")
+    // console.log(this.$auth.$storage.getUniversal('loggedIn'));
+    // if(!this.$auth.$storage.getUniversal('loggedIn')) {
+    //   this.$router.push({path: '/login'});
+    //   return
+    // }
     const eventsRes = await this.$axios.$get(
       "https://t2meet.bubbleapps.io/version-test/api/1.1/obj/event"
     );
@@ -401,7 +404,7 @@ export default {
 }
 .carousel {
   height: 33vw;
-  background-color: rgb(242, 242, 242);
+  background-color: rgb(0,0,0);
   // box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.5);
   @media screen and (max-width: 1920px) {
     height: 580px !important;
