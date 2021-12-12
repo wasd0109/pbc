@@ -13,5 +13,6 @@ export default {};
   display: flex;
   justify-content: center;
   margin-top: 1rem;
+  color: teal;
 }
 </style>
