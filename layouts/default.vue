@@ -22,6 +22,12 @@
         >Search
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
+      <v-btn
+        href="https://t2meet.bubbleapps.io/version-test/login"
+        target="_blank"
+        >Organize
+        <v-icon>mdi-account-group</v-icon>
+      </v-btn>
     </v-bottom-navigation>
   </v-app>
 </template>
@@ -34,13 +40,11 @@ a {
 </style>
 
 <script>
-import Navigation from '@/components/Navigation';
+import Navigation from "@/components/Navigation";
 export default {
   // middleware: ['auth'],
   components: {
-    Navigation
-  }
+    Navigation,
+  },
 };
 </script>
-
-
